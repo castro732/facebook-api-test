@@ -59,12 +59,22 @@ class MainController extends Controller
     {
         $helper = $this->fb->getRedirectLoginHelper();
 
-        if (isset($_SESSION['facebook_access_token'])) {
-            $logoutUrl = $helper->getLogoutUrl($_SESSION['facebook_access_token'], env('APP_URL'));
-            return view('home')->with(['logoutUrl' => $logoutUrl]);
-        } else {
-            $loginUrl = $helper->getLoginUrl(env('APP_URL').'/login-callback');
-            return view('home')->with(['loginUrl' => $loginUrl]);
+        if ($request->expectsJson()) {
+            $res = ['error' => [
+                'message' => 'You need to authorize this app to access Facebook on your behalf, get an access token using the link below in your browser.',
+                'link' => $helper->getLoginUrl(env('APP_URL').'/login-callback'),
+                ]
+            ];
+            return response()->json($res);
+        }
+        else {
+            if (isset($_SESSION['facebook_access_token'])) {
+                $logoutUrl = $helper->getLogoutUrl($_SESSION['facebook_access_token'], env('APP_URL'));
+                return view('home')->with(['logoutUrl' => $logoutUrl]);
+            } else {
+                $loginUrl = $helper->getLoginUrl(env('APP_URL').'/login-callback');
+                return view('home')->with(['loginUrl' => $loginUrl]);
+            }
         }
     }
 
