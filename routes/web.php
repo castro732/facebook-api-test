@@ -15,4 +15,4 @@ $router->get('/', 'MainController@home');
 
 $router->get('/login-callback', 'MainController@callback');
 $router->get('/logout', 'MainController@logout');
-$router->get('/facebook/profile/{id}', 'MainController@profile');
+$router->get('/profile/facebook/{id}', 'MainController@profile');
