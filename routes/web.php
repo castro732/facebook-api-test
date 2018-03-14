@@ -16,3 +16,6 @@ $router->get('/', 'MainController@home');
 $router->get('/login-callback', 'MainController@callback');
 $router->get('/logout', 'MainController@logout');
 $router->get('/profile/facebook/{id}', 'MainController@profile');
+
+$router->get('/{any}', 'MainController@notFound');
+$router->post('/{any}', 'MainController@notFound');

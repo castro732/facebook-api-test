@@ -108,4 +108,13 @@ class MainController extends Controller
         unset($_SESSION['facebook_access_token']);
         return redirect('/');
     }
+
+    public function notFound()
+    {
+        $res = ['error' => [
+                'message' => 'Endpoint not found',
+                ]
+            ];
+        return response()->json($res, '404');
+    }
 }
