@@ -13,7 +13,16 @@ class MainController extends Controller
      */
     public function __construct()
     {
-        //
+        // Start the session
+        if(!session_id()) {
+            session_start();
+        }
+
+        $this->fb = new \Facebook\Facebook([
+            'app_id' => env('FB_APP_ID'),
+            'app_secret' => env('FB_APP_SECRET'),
+            'default_graph_version' => 'v2.12',
+        ]);
     }
 
 }
