@@ -89,4 +89,9 @@ class MainController extends Controller
         return $node;
     }
 
+    public function logout()
+    {
+        unset($_SESSION['facebook_access_token']);
+        return redirect('/');
+    }
 }
