@@ -67,4 +67,26 @@ class MainController extends Controller
             return view('home')->with(['loginUrl' => $loginUrl]);
         }
     }
+
+    public function profile(Request $request, $id)
+    {
+        if (isset($_SESSION['facebook_access_token'])) {
+            try {
+                $response = $this->fb->get('/'.$id.'?fields=first_name,last_name', $_SESSION['facebook_access_token']);
+            } catch(\Facebook\Exceptions\FacebookResponseException $e) {
+                $res = ['error' => ['message' => $e->getMessage()]];
+                return response($res, '422');
+            } catch(\Facebook\Exceptions\FacebookSDKException $e) {
+                $res = ['error' => ['message' => $e->getMessage()]];
+                return response($res, '422');
+            }
+        } else {
+            return redirect('/');
+        }
+
+        $node = $response->getGraphNode();
+
+        return $node;
+    }
+
 }
