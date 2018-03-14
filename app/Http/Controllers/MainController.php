@@ -25,4 +25,16 @@ class MainController extends Controller
         ]);
     }
 
+    public function home(Request $request)
+    {
+        $helper = $this->fb->getRedirectLoginHelper();
+
+        if (isset($_SESSION['facebook_access_token'])) {
+            $logoutUrl = $helper->getLogoutUrl($_SESSION['facebook_access_token'], 'http://localhost:8008/');
+            return view('home')->with(['logoutUrl' => $logoutUrl]);
+        } else {
+            $loginUrl = $helper->getLoginUrl('http://localhost:8008/login-callback');
+            return view('home')->with(['loginUrl' => $loginUrl]);
+        }
+    }
 }
