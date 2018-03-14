@@ -25,6 +25,36 @@ class MainController extends Controller
         ]);
     }
 
+    public function callback(Request $request)
+    {
+        $helper = $this->fb->getRedirectLoginHelper();
+        // CSRF state param
+        if (isset($_GET['state'])) {
+            $helper->getPersistentDataHandler()->set('state', $_GET['state']);
+        }
+        try {
+            $accessToken = $helper->getAccessToken();
+        } catch(Facebook\Exceptions\FacebookResponseException $e) {
+            // When Graph returns an error
+            $res = ['error' => ['message' => $e->getMessage()]];
+            return response($res, '422');
+        } catch(Facebook\Exceptions\FacebookSDKException $e) {
+            // When validation fails or other local issues
+            $res = ['error' => ['message' => $e->getMessage()]];
+                return response($res, '422');
+        }
+
+        if (isset($accessToken)) {
+            // Logged in!
+            $_SESSION['facebook_access_token'] = (string) $accessToken;
+            return redirect('/');
+        } elseif ($helper->getError()) {
+            // The user denied the request
+            $res = ['error' => ['message' => 'user denied the request']];
+            return response($res, '422');
+        }
+    }
+
     public function home(Request $request)
     {
         $helper = $this->fb->getRedirectLoginHelper();
