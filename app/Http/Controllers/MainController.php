@@ -80,23 +80,27 @@ class MainController extends Controller
 
     public function profile(Request $request, $id)
     {
-        if (isset($_SESSION['facebook_access_token'])) {
-            try {
-                $response = $this->fb->get('/'.$id.'?fields=first_name,last_name', $_SESSION['facebook_access_token']);
-            } catch(\Facebook\Exceptions\FacebookResponseException $e) {
-                $res = ['error' => ['message' => $e->getMessage()]];
-                return response($res, '422');
-            } catch(\Facebook\Exceptions\FacebookSDKException $e) {
-                $res = ['error' => ['message' => $e->getMessage()]];
-                return response($res, '422');
-            }
+        if ($request->headers->has('authorization')) {
+            $accessToken = explode(' ', $request->header('authorization'))[1];
+        } else if (isset($_SESSION['facebook_access_token'])) {
+            $accessToken = $_SESSION['facebook_access_token'];
         } else {
             return redirect('/');
         }
 
-        $node = $response->getGraphNode();
+        try {
+            $response = $this->fb->get('/'.$id.'?fields=first_name,last_name', $accessToken);
+        } catch(\Facebook\Exceptions\FacebookResponseException $e) {
+            $res = ['error' => ['message' => $e->getMessage()]];
+            return response($res, '422');
+        } catch(\Facebook\Exceptions\FacebookSDKException $e) {
+            $res = ['error' => ['message' => $e->getMessage()]];
+            return response($res, '422');
+        }
 
-        return $node;
+        $node = $response->getGraphNode()->asArray();
+        
+        return response()->json($node);
     }
 
     public function logout()
