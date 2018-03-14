@@ -31,8 +31,10 @@
 
             <a href='<?php echo $loginUrl; ?>'>Login to facebook</a>
         @else
-            <h3>This app is authorized to access Facebook on your behalf</h3>
-
+            <h3>This app is <span style="color: green;">authorized</span> to access Facebook on your behalf</h3>
+            <h4>Your access token is:</h4>
+            <span style="overflow-wrap: break-word;">{{$_SESSION['facebook_access_token']}}</span>
+            <br>
             <a href='/logout'>Logout from the app</a>
         @endif
         
